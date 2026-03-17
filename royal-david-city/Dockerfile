@@ -1,12 +1,13 @@
- # Build stage
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY RoyalDavidCity.Api/*.csproj ./RoyalDavidCity.Api/
-RUN dotnet restore RoyalDavidCity.Api/RoyalDavidCity.Api.csproj
+# Copy the project file and restore
+COPY RoyalDavidCity.Api.csproj ./
+RUN dotnet restore RoyalDavidCity.Api.csproj
 
+# Copy the rest of the source
 COPY . .
-WORKDIR /src/RoyalDavidCity.Api
 RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
@@ -18,4 +19,3 @@ EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
 ENTRYPOINT ["dotnet", "RoyalDavidCity.Api.dll"]
-
