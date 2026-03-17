@@ -8,7 +8,7 @@ RUN dotnet restore RoyalDavidCity.Api.csproj
 
 # Copy the rest of the source
 COPY . .
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish RoyalDavidCity.Api.csproj -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
