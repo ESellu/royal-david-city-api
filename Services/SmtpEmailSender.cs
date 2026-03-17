@@ -1,0 +1,41 @@
+﻿using System.Net;
+using System.Net.Mail;
+using Microsoft.Extensions.Configuration;
+
+namespace RoyalDavidCity.Api.Services
+{
+    public class SmtpEmailSender : IEmailSender
+    {
+        private readonly IConfiguration _config;
+
+        public SmtpEmailSender(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public async Task SendAsync(string toEmail, string subject, string htmlBody)
+        {
+            var host = _config["Smtp:Host"];
+            var port = int.Parse(_config["Smtp:Port"] ?? "587");
+            var user = _config["Smtp:User"];
+            var password = _config["Smtp:Password"];
+            var from = _config["Smtp:From"];
+
+            using var client = new SmtpClient(host, port);
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(user, password);
+
+            var message = new MailMessage
+            {
+                From = new MailAddress(from),
+                Subject = subject,
+                Body = htmlBody,
+                IsBodyHtml = true
+            };
+
+            message.To.Add(toEmail);
+
+            await client.SendMailAsync(message);
+        }
+    }
+}
